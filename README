@@ -1,1 +1,23 @@
 This is the cloudbees api client (you can think of this as a reference implementation). 
+
+Build the Jar
+-------------
+# mvn package
+
+
+Using the code
+--------------
+import com.cloudbees.api.BeesClient;
+
+class ApiCall {
+ public static void main(String[] args) {
+  String apiUrl = "https://api.cloudbees.com";
+  String apiKey = ""; //from CloudBees account
+  String secret = ""; //from CloudBees account
+  BeesClient client = new BeesClient(apiUrl, apiKey, secret, "xml", "1.0")
+  
+  //list your applications
+  client.applicationList();
+ }
+}
+

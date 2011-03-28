@@ -1,3 +1,7 @@
 target
 *.iml
 build
+.DS_Store
+.classpath
+.project
+.settings
