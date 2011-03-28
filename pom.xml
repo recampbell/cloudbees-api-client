@@ -25,33 +25,51 @@
   <url>http://maven.apache.org</url>
   <build>
     <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>1.5</source>
-            <target>1.5</target>
-          </configuration>
-        </plugin>
-        <plugin>
-	        <artifactId>maven-assembly-plugin</artifactId>
-	        <configuration>
-	          <descriptorRefs>
-	            <descriptorRef>jar-with-dependencies</descriptorRef>
-	          </descriptorRefs>
-	        </configuration>
-	        <executions>
-	          <execution>
-	            <id>make-assembly</id> <!-- this is used for inheritance merges -->
-	            <phase>package</phase> <!-- append to the packaging phase. -->
-	            <goals>
-	              <goal>single</goal>
-	            </goals>
-	          </execution>
-	        </executions>
-      </plugin>
-      </plugins>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                  <source>1.5</source>
+                  <target>1.5</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                <archive>
+                  <manifest>
+                    <mainClass>com.cloudbees.api.BeesClient</mainClass>
+                    <packageName>com.cloudbees.api</packageName>
+                  </manifest>
+                </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+              <artifactId>maven-assembly-plugin</artifactId>
+              <configuration>
+                <descriptorRefs>
+                  <descriptorRef>jar-with-dependencies</descriptorRef>
+                </descriptorRefs>
+                <archive>
+                  <manifest>
+                    <mainClass>com.cloudbees.api.BeesClient</mainClass>
+                    <packageName>com.cloudbees.api</packageName>
+                  </manifest>
+                </archive>
+              </configuration>
+              <executions>
+                <execution>
+                  <id>make-my-jar-with-dependencies</id>
+                  <phase>package</phase>
+                  <goals>
+                    <goal>single</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+        </plugins>
     </pluginManagement>
   </build>
   <dependencies>
