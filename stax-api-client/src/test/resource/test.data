@@ -1,0 +1,10 @@
+bees.project.app.id=hello
+bees.domain.url=cloudbees.net
+bees.app.war=/tmp/hello/build/webapp.war
+bees.db.name=testdb1234
+bees.db.user=testuser1234
+bees.db.password=testpassword
+
+
+
+
