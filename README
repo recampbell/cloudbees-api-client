@@ -11,7 +11,7 @@ import com.cloudbees.api.BeesClient;
 
 class ApiCall {
  public static void main(String[] args) {
-  String apiUrl = "https://api.cloudbees.com";
+  String apiUrl = "https://api.cloudbees.com/api";
   String apiKey = ""; //from CloudBees account
   String secret = ""; //from CloudBees account
   BeesClient client = new BeesClient(apiUrl, apiKey, secret, "xml", "1.0")
