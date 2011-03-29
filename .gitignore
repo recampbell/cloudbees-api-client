@@ -1,4 +1,8 @@
 target
+*.iml
+build
+.DS_Store
+=======
 # IntelliJ project files 
 *.iml
 *.ipr
