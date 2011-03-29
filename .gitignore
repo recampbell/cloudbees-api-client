@@ -2,6 +2,16 @@ target
 *.iml
 build
 .DS_Store
+=======
+# IntelliJ project files 
+*.iml
+*.ipr
+*.iws
+.idea
+
+# eclipse project file
+.settings
 .classpath
 .project
-.settings
+
+.DS_Store
