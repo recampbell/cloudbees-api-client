@@ -24,6 +24,10 @@ public class BeesClient extends BeesClientBase
 {
     static Logger logger = Logger.getLogger(BeesClient.class.getSimpleName());
 
+
+    public BeesClient(BeesClientConfiguration beesClientConfiguration) {
+        super(beesClientConfiguration);
+    }
     public BeesClient(String server, String apikey, String secret,
                       String format, String version)
     {

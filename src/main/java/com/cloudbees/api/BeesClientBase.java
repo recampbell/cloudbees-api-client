@@ -63,23 +63,30 @@ public class BeesClientBase {
 
     private boolean verbose = true;
 
-    public BeesClientBase(String serverApiUrl, String apikey, String secret,
+    private BeesClientConfiguration beesClientConfiguration;
+
+    public BeesClientBase(BeesClientConfiguration beesClientConfiguration ) {
+        this.beesClientConfiguration = beesClientConfiguration;
+        if (beesClientConfiguration.getServerApiUrl() != null) {
+            this.serverApiUrl = beesClientConfiguration.getServerApiUrl();
+        }
+        if (beesClientConfiguration.getApikey() != null) {
+            this.api_key = beesClientConfiguration.getApikey();
+        }
+        if (beesClientConfiguration.getSecret() != null) {
+            this.secret = beesClientConfiguration.getSecret();
+        }
+        if (beesClientConfiguration.getFormat() != null) {
+            this.format = beesClientConfiguration.getFormat();
+        }
+        if (beesClientConfiguration.getVersion() != null) {
+            this.version = beesClientConfiguration.getVersion();
+        }
+    }
+
+    public BeesClientBase(String serverApiUrl, String apiKey, String secret,
                           String format, String version) {
-        if (serverApiUrl != null) {
-            this.serverApiUrl = serverApiUrl;
-        }
-        if (apikey != null) {
-            this.api_key = apikey;
-        }
-        if (secret != null) {
-            this.secret = secret;
-        }
-        if (format != null) {
-            this.format = format;
-        }
-        if (version != null) {
-            this.version = version;
-        }
+        this(new BeesClientConfiguration( serverApiUrl, apiKey, secret, format, version ));
     }
 
     public boolean isVerbose() {
