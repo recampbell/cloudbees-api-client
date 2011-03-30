@@ -163,19 +163,19 @@ public class BeesClient extends BeesClientBase
             earFile, srcFile, archiveType, false, progress);
     }
     public ApplicationDeployArchiveResponse applicationDeployWar(
-        String appId, String environment, String description, String earFile,
+        String appId, String environment, String description, String warFile,
         String srcFile, UploadProgress progress) throws Exception
     {
-        return applicationDeployWar(appId, environment, description, earFile,
+        return applicationDeployWar(appId, environment, description, warFile,
                 srcFile, true, progress);
     }
     public ApplicationDeployArchiveResponse applicationDeployWar(
-        String appId, String environment, String description, String earFile,
+        String appId, String environment, String description, String warFile,
         String srcFile, boolean deltaDeploy, UploadProgress progress) throws Exception
     {
         String archiveType = "war";
         return applicationDeployArchive(appId, environment, description,
-            earFile, srcFile, archiveType, deltaDeploy, progress);
+            warFile, srcFile, archiveType, deltaDeploy, progress);
     }
 
     public ApplicationDeployArchiveResponse applicationDeployArchive(
