@@ -21,7 +21,7 @@ package com.cloudbees.api;
 public class BeesClientConfiguration {
 
     private String serverApiUrl;
-    private String apikey;
+    private String apiKey;
     private String secret;
     private String format;
     private String version;
@@ -32,7 +32,7 @@ public class BeesClientConfiguration {
 
     public BeesClientConfiguration(String serverApiUrl, String apiKey, String secret, String format, String version) {
         this.serverApiUrl = serverApiUrl;
-        this.apikey = apikey;
+        this.apiKey = apiKey;
         this.secret = secret;
         this.format = format;
         this.version = version;
@@ -88,14 +88,14 @@ public class BeesClientConfiguration {
         this.proxyPassword = proxyPassword;
     }
 
-    public String getApikey()
+    public String getApiKey()
     {
-        return apikey;
+        return apiKey;
     }
 
-    public void setApikey( String apikey )
+    public void setApiKey(String apiKey)
     {
-        this.apikey = apikey;
+        this.apiKey = apiKey;
     }
 
     public String getSecret()

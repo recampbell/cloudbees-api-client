@@ -70,8 +70,8 @@ public class BeesClientBase {
         if (beesClientConfiguration.getServerApiUrl() != null) {
             this.serverApiUrl = beesClientConfiguration.getServerApiUrl();
         }
-        if (beesClientConfiguration.getApikey() != null) {
-            this.api_key = beesClientConfiguration.getApikey();
+        if (beesClientConfiguration.getApiKey() != null) {
+            this.api_key = beesClientConfiguration.getApiKey();
         }
         if (beesClientConfiguration.getSecret() != null) {
             this.secret = beesClientConfiguration.getSecret();
