@@ -35,7 +35,7 @@ public class HttpClientHelper {
             //if there are proxy credentials available, set those too
             Credentials proxyCredentials = null;
             String proxyUser = beesClientConfiguration.getProxyUser();
-            String proxyPassword = beesClientConfiguration.getProxyUser();
+            String proxyPassword = beesClientConfiguration.getProxyPassword();
             if(proxyUser != null || proxyPassword != null)
                 proxyCredentials = new UsernamePasswordCredentials(proxyUser, proxyPassword);
             if(proxyCredentials != null)

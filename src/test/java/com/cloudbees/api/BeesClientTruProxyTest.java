@@ -19,6 +19,10 @@ import com.cloudbees.api.util.CloudbeesServer;
 import com.cloudbees.api.util.ProxyServer;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
@@ -69,6 +73,43 @@ public class BeesClientTruProxyTest
             assertNotNull(response);
             assertEquals(2, response.getApplications().size());
             assertEquals(1, authAsyncProxyServlet.requestsReceived);
+        }
+        finally
+        {
+            cloudbeesServer.stopServer();
+            proxyServer.stop();
+        }
+
+    }
+
+    @Test
+    public void requestTruProxyWithAutz()
+        throws Exception
+    {
+        Map<String, String> autzs = new HashMap<String,String>();
+        autzs.put("olamy","yoyoyoyo");
+        ProxyServer.AuthAsyncProxyServlet authAsyncProxyServlet = new ProxyServer.AuthAsyncProxyServlet(autzs);
+        ProxyServer proxyServer = new ProxyServer( authAsyncProxyServlet );
+
+        CloudbeesServer cloudbeesServer = new CloudbeesServer();
+        cloudbeesServer.startServer();
+
+        try
+        {
+            proxyServer.start();
+            BeesClientConfiguration beesClientConfiguration =
+                new BeesClientConfiguration( "http://localhost:" + cloudbeesServer.getPort() + "/", "foo", "bar", "xml", "1.0" );
+            beesClientConfiguration.setProxyHost("localhost");
+            beesClientConfiguration.setProxyPort(proxyServer.getPort());
+            beesClientConfiguration.setProxyUser("olamy");
+            beesClientConfiguration.setProxyPassword("yoyoyoyo");
+            BeesClient beesClient = new BeesClient(beesClientConfiguration);
+            ApplicationListResponse response = beesClient.applicationList();
+
+            assertNotNull(response);
+            assertEquals(2, response.getApplications().size());
+            // one for authz + one for the request
+            assertEquals(2, authAsyncProxyServlet.requestsReceived);
         }
         finally
         {
