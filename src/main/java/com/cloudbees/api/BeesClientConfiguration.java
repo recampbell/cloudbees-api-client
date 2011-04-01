@@ -26,7 +26,7 @@ public class BeesClientConfiguration {
     private String format;
     private String version;
     private String proxyHost;
-    private String proxyPort;
+    private int proxyPort;
     private String proxyUser;
     private String proxyPassword;
 
@@ -58,12 +58,12 @@ public class BeesClientConfiguration {
         this.proxyHost = proxyHost;
     }
 
-    public String getProxyPort()
+    public int getProxyPort()
     {
         return proxyPort;
     }
 
-    public void setProxyPort( String proxyPort )
+    public void setProxyPort( int proxyPort )
     {
         this.proxyPort = proxyPort;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2011, CloudBees Inc.
+ * Copyright 2010-2011, CloudBees Inc., Olivier Lamy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,18 +24,19 @@ import java.util.Date;
 /**
  * @author Olivier Lamy
  */
-public class XmlResponseGenerator
-{
-    public static String applicationListResponse()
-    {
+public class XmlResponseGenerator {
+
+    static XStream xStream = new XStream();
+    static {
+        xStream.alias("ApplicationListResponse" , ApplicationListResponse.class);
+        xStream.alias("ApplicationInfo" , ApplicationInfo.class);
+    }
+
+    public static String applicationListResponse() {
         ApplicationListResponse applicationListResponse = new ApplicationListResponse();
-        ApplicationInfo applicationInfo =
-            new ApplicationInfo( "foo", "nice application", new Date(), "running", new String[]{ "http://foo.bar" } );
-
-        applicationListResponse.getApplications().add( applicationInfo );
-        XStream xstream = new XStream();
-
-        return xstream.toXML( applicationListResponse );
+        applicationListResponse.getApplications().add(new ApplicationInfo("foo1", "nice application1", new Date(), "running", new String[]{"http://foo1.bar"}));
+        applicationListResponse.getApplications().add(new ApplicationInfo("foo2", "nice application2", new Date(), "sucks", new String[]{"http://foo2.bar"}));
+        return xStream.toXML(applicationListResponse);
     }
 
 }

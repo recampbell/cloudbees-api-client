@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2011, CloudBees Inc.
+ * Copyright 2010-2011, CloudBees Inc., Olivier Lamy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.security.B64Code;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
-import org.mortbay.proxy.AsyncProxyServlet;
+import org.mortbay.servlet.AsyncProxyServlet;
 
 /**
  * @author Olivier Lamy
@@ -65,7 +65,6 @@ public class ProxyServer
 
         context.addServlet( new ServletHolder( proxyServlet ), "/" );
 
-        context.addServlet( new ServletHolder( new CloudbessServlet() ), "/" );
     }
 
     /**
@@ -86,29 +85,12 @@ public class ProxyServer
         return ( connector.getLocalPort() <= 0 ? connector.getPort() : connector.getLocalPort() );
     }
 
-    /**
-     * @throws Exception if any
-     */
-    public void start()
-        throws Exception
-    {
-        if ( proxyServer != null )
-        {
+    public void start() throws Exception {
             proxyServer.start();
-        }
     }
 
-    /**
-     * @throws Exception if any
-     */
-    public void stop()
-        throws Exception
-    {
-        if ( proxyServer != null )
-        {
-            proxyServer.stop();
-        }
-        proxyServer = null;
+    public void stop() throws Exception {
+        proxyServer.stop();
     }
 
     private Connector getDefaultConnector( String hostName, int port )
@@ -137,29 +119,14 @@ public class ProxyServer
         return connector;
     }
 
-    public static class CloudbessServlet
-        extends HttpServlet
-    {
-        public void service( ServletRequest req, ServletResponse res )
-            throws ServletException, IOException
-        {
-            final HttpServletRequest request = (HttpServletRequest) req;
-            final HttpServletResponse response = (HttpServletResponse) res;
-
-            response.getWriter().print( XmlResponseGenerator.applicationListResponse() );
-        }
-    }
-
-
-    /**
-     * A proxy servlet with authentication support.
-     */
     public static class AuthAsyncProxyServlet
         extends AsyncProxyServlet
     {
         private Map<String, String> authentications;
 
         private long sleepTime = 0;
+
+        public long requestsReceived = 0;
 
         /**
          * Constructor for non authentication servlet.
@@ -169,11 +136,6 @@ public class ProxyServer
             super();
         }
 
-        /**
-         * Constructor for authentication servlet.
-         *
-         * @param authentications a map of user/password
-         */
         public AuthAsyncProxyServlet( Map<String, String> authentications )
         {
             this();
@@ -181,12 +143,6 @@ public class ProxyServer
             this.authentications = authentications;
         }
 
-        /**
-         * Constructor for authentication servlet.
-         *
-         * @param authentications a map of user/password
-         * @param sleepTime       a positive time to sleep the service thread (for timeout)
-         */
         public AuthAsyncProxyServlet( Map<String, String> authentications, long sleepTime )
         {
             this();
@@ -195,15 +151,12 @@ public class ProxyServer
             this.sleepTime = sleepTime;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         public void service( ServletRequest req, ServletResponse res )
             throws ServletException, IOException
         {
             final HttpServletRequest request = (HttpServletRequest) req;
             final HttpServletResponse response = (HttpServletResponse) res;
-
+            requestsReceived++;
             if ( this.authentications != null && !this.authentications.isEmpty() )
             {
                 String proxyAuthorization = request.getHeader( "Proxy-Authorization" );

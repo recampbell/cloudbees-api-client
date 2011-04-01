@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2011, CloudBees Inc.
+ * Copyright 2010-2011, CloudBees Inc., Olivier Lamy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,37 @@
  */
 package com.cloudbees.api;
 
+import com.cloudbees.api.util.CloudbeesServer;
 import com.cloudbees.api.util.ProxyServer;
+import org.junit.Ignore;
 import org.junit.Test;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author <a href="mailto:Olivier.LAMY@accor.com">Olivier Lamy</a>
  */
 public class BeesClientTruProxyTest
 {
+
+    @Test
+    public void directRequest() throws Exception {
+        CloudbeesServer cloudbeesServer = new CloudbeesServer();
+        cloudbeesServer.startServer();
+
+        try {
+            BeesClientConfiguration beesClientConfiguration =
+                new BeesClientConfiguration( "http://localhost:" + cloudbeesServer.getPort() + "/", "foo", "bar", "xml", "1.0" );
+            BeesClient beesClient = new BeesClient(beesClientConfiguration);
+            ApplicationListResponse response = beesClient.applicationList();
+            assertNotNull(response);
+            assertEquals(2, response.getApplications().size());
+
+        } finally {
+            cloudbeesServer.stopServer();
+        }
+    }
+
     @Test
     public void requestTruProxy()
         throws Exception
@@ -30,16 +53,26 @@ public class BeesClientTruProxyTest
         ProxyServer.AuthAsyncProxyServlet authAsyncProxyServlet = new ProxyServer.AuthAsyncProxyServlet();
         ProxyServer proxyServer = new ProxyServer( authAsyncProxyServlet );
 
+        CloudbeesServer cloudbeesServer = new CloudbeesServer();
+        cloudbeesServer.startServer();
+
         try
         {
             proxyServer.start();
             BeesClientConfiguration beesClientConfiguration =
-                new BeesClientConfiguration( "http://localhost:" + proxyServer.getPort() + "/", "foo", "bar", "xml", "1.0" );
+                new BeesClientConfiguration( "http://localhost:" + cloudbeesServer.getPort() + "/", "foo", "bar", "xml", "1.0" );
+            beesClientConfiguration.setProxyHost("localhost");
+            beesClientConfiguration.setProxyPort(proxyServer.getPort());
             BeesClient beesClient = new BeesClient(beesClientConfiguration);
-            ApplicationListResponse applicationListResponse = beesClient.applicationList();
+            ApplicationListResponse response = beesClient.applicationList();
+
+            assertNotNull(response);
+            assertEquals(2, response.getApplications().size());
+            assertEquals(1, authAsyncProxyServlet.requestsReceived);
         }
         finally
         {
+            cloudbeesServer.stopServer();
             proxyServer.stop();
         }
 

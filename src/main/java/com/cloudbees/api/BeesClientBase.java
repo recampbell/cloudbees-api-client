@@ -40,6 +40,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
@@ -66,6 +67,9 @@ public class BeesClientBase {
     private BeesClientConfiguration beesClientConfiguration;
 
     public BeesClientBase(BeesClientConfiguration beesClientConfiguration ) {
+        if (beesClientConfiguration==null) {
+            throw new IllegalArgumentException("BeesClientConfiguration cannot be null");
+        }
         this.beesClientConfiguration = beesClientConfiguration;
         if (beesClientConfiguration.getServerApiUrl() != null) {
             this.serverApiUrl = beesClientConfiguration.getServerApiUrl();
@@ -208,14 +212,11 @@ public class BeesClientBase {
     }
 
     public String executeRequest(String url) throws Exception {
-        URL myurl = new URL(url);
-        HttpURLConnection con;
-        if (myurl.getProtocol().equals("https")) {
-            con = (HttpsURLConnection) myurl.openConnection();
-        } else {
-            con = (HttpURLConnection) myurl.openConnection();
-        }
-        return getResponseString(con.getInputStream());
+        HttpClient httpClient = HttpClientHelper.createClient(this.beesClientConfiguration);
+        GetMethod getMethod = new GetMethod(url);
+        httpClient.executeMethod(getMethod);
+
+        return getResponseString(getMethod.getResponseBodyAsStream());
     }
 
     private String getResponseString(InputStream ins) throws IOException {
@@ -292,7 +293,7 @@ public class BeesClientBase {
                     .toArray(new Part[parts.size()]), filePost.getParams(),
                     writeListener, fileUploadSize);
             filePost.setRequestEntity(uploadEntity);
-            HttpClient client = HttpClientHelper.createClient();
+            HttpClient client = HttpClientHelper.createClient(this.beesClientConfiguration);
             client.getHttpConnectionManager().getParams().setConnectionTimeout(
                     10000);
             
