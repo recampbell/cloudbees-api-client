@@ -17,14 +17,13 @@ package com.cloudbees.api;
 
 import com.cloudbees.api.util.CloudbeesServer;
 import com.cloudbees.api.util.ProxyServer;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author <a href="mailto:Olivier.LAMY@accor.com">Olivier Lamy</a>
