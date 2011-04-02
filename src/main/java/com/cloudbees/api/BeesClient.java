@@ -243,14 +243,16 @@ public class BeesClient extends BeesClientBase
         try {
             ApplicationDeployArchiveResponse apiResponse =
                 (ApplicationDeployArchiveResponse)readResponse(response);
-            // Delete the delta archive file
-            if (deployDelta)
-                archiveFile.delete();
+
             return apiResponse;
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Invalid application deployment response: " + appId, e);
             logger.log(Level.FINE, "Deploy response trace: " + response);
             throw e;
+        } finally {
+            // Delete the delta archive file
+            if (deployDelta)
+                archiveFile.delete();
         }
     }
 

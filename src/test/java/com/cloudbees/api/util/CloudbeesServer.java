@@ -64,11 +64,13 @@ public class CloudbeesServer {
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
             //TODO take care of &format=xml/json
             String action = req.getParameter("action");
-            if (action.equals("application.list"))
-            {
+            if (action.equals("application.list")) {
                 String response = XmlResponseGenerator.applicationListResponse();
                 resp.getWriter().print(response);
                 return;
+            }
+            if (action.equals("application.deployArchive")) {
+
             }
         }
     }
