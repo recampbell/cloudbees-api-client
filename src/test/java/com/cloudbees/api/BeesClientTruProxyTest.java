@@ -17,8 +17,13 @@ package com.cloudbees.api;
 
 import com.cloudbees.api.util.CloudbeesServer;
 import com.cloudbees.api.util.ProxyServer;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.log4j.Logger;
 import org.junit.Test;
+import org.mortbay.util.StringUtil;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +35,9 @@ import static org.junit.Assert.assertNotNull;
  */
 public class BeesClientTruProxyTest
 {
+
+    private Logger log = Logger.getLogger(getClass());
+
 
     @Test
     public void directRequest() throws Exception {
@@ -117,4 +125,49 @@ public class BeesClientTruProxyTest
         }
 
     }
+
+    @Test
+    public void deployWarArchive() throws Exception {
+        CloudbeesServer cloudbeesServer = new CloudbeesServer();
+        cloudbeesServer.startServer();
+        File local = new File("src/test/translate-puzzle-webapp-1.0.0-SNAPSHOT.war");
+        File uploaded = File.createTempFile("uploaded", "foo");
+        try
+        {
+            BeesClientConfiguration beesClientConfiguration =
+                new BeesClientConfiguration( "http://localhost:" + cloudbeesServer.getPort() + "/", "foo", "bar", "xml", "1.0" );
+            BeesClient beesClient = new BeesClient(beesClientConfiguration);
+            beesClient.setVerbose(true);
+            MockUploadProgress mockUploadProgress = new MockUploadProgress();
+
+            beesClient.applicationDeployWar("fooId","env","desc",local.getPath(), null, mockUploadProgress);
+            assertNotNull(cloudbeesServer.cloudbessServlet.items);
+            int realFilesNumber = 0;
+
+            for (FileItem fileItem : cloudbeesServer.cloudbessServlet.items) {
+                log.info("fileItem " + fileItem.getName() + ", size " + fileItem.getSize());
+                if (fileItem.getName() != null ) {
+                    realFilesNumber++;
+                    fileItem.write(uploaded);
+                }
+            }
+            assertEquals(1, realFilesNumber);
+            assertEquals("local and uploaded not the same size", local.length(), uploaded.length());
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            cloudbeesServer.stopServer();
+            uploaded.delete();
+        }
+    }
+
+    static class MockUploadProgress implements UploadProgress {
+
+        long total;
+
+        public void handleBytesWritten(long deltaCount, long totalWritten, long totalToSend) {
+            //
+        }
+    }
+
 }

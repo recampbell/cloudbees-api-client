@@ -15,6 +15,11 @@
  */
 package com.cloudbees.api.util;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.Context;
@@ -25,6 +30,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Olivier Lamy
@@ -35,12 +41,15 @@ public class CloudbeesServer {
 
     int port;
 
+    public CloudbessServlet cloudbessServlet = new CloudbessServlet();
+
+
     public void startServer()
         throws Exception
     {
         this.server = new Server( 0 );
         Context context = new Context( this.server, "/", 0 );
-        context.addServlet( new ServletHolder(new CloudbessServlet()), "/*" );
+        context.addServlet( new ServletHolder(cloudbessServlet), "/*" );
         this.server.start();
         Connector connector = this.server.getConnectors()[0];
         this.port = connector.getLocalPort();
@@ -59,18 +68,39 @@ public class CloudbeesServer {
         return port;
     }
 
-    static class CloudbessServlet extends HttpServlet {
-        @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-            //TODO take care of &format=xml/json
-            String action = req.getParameter("action");
-            if (action.equals("application.list")) {
-                String response = XmlResponseGenerator.applicationListResponse();
-                resp.getWriter().print(response);
-                return;
-            }
-            if (action.equals("application.deployArchive")) {
+    public static class CloudbessServlet extends HttpServlet {
 
+        public List <FileItem> items;
+
+        @Override
+        protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+            //TODO take care of &format=xml/json
+            if (req.getMethod().equalsIgnoreCase("get") ) {
+                String action = req.getParameter("action");
+                if (action.equals("application.list")) {
+                    String response = XmlResponseGenerator.applicationListResponse();
+                    resp.getWriter().print(response);
+                    return;
+                }
+                if (action.equals("application.checkSums")) {
+                    String response = XmlResponseGenerator.applicationCheckSumsResponse();
+                    resp.getWriter().print(response);
+                    return;
+                }
+            } else if (req.getMethod().equalsIgnoreCase("post") ) {
+                boolean isMultipart = ServletFileUpload.isMultipartContent(req);
+                if (isMultipart) {
+                    FileItemFactory factory = new DiskFileItemFactory();
+                    ServletFileUpload upload = new ServletFileUpload(factory);
+                    try {
+                        items = upload.parseRequest(req);
+                    } catch (FileUploadException e) {
+                        throw  new ServletException(e.getMessage(),e);
+                    }
+                String response = XmlResponseGenerator.applicationDeployArchiveResponse();
+                resp.getWriter().print(response);
+                }
+                return;
             }
         }
     }

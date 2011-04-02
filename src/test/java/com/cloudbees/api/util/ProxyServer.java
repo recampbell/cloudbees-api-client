@@ -33,7 +33,7 @@ import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.security.B64Code;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
-import org.mortbay.servlet.AsyncProxyServlet;
+import org.mortbay.proxy.AsyncProxyServlet;
 
 /**
  * @author Olivier Lamy

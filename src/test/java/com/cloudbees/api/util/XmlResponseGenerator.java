@@ -15,11 +15,14 @@
  */
 package com.cloudbees.api.util;
 
+import com.cloudbees.api.ApplicationCheckSumsResponse;
+import com.cloudbees.api.ApplicationDeployArchiveResponse;
 import com.cloudbees.api.ApplicationInfo;
 import com.cloudbees.api.ApplicationListResponse;
 import com.thoughtworks.xstream.XStream;
 
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * @author Olivier Lamy
@@ -30,6 +33,8 @@ public class XmlResponseGenerator {
     static {
         xStream.alias("ApplicationListResponse" , ApplicationListResponse.class);
         xStream.alias("ApplicationInfo" , ApplicationInfo.class);
+        xStream.alias("ApplicationCheckSumsResponse", ApplicationCheckSumsResponse.class);
+        xStream.alias("ApplicationDeployArchiveResponse", ApplicationDeployArchiveResponse.class);
     }
 
     public static String applicationListResponse() {
@@ -37,6 +42,17 @@ public class XmlResponseGenerator {
         applicationListResponse.getApplications().add(new ApplicationInfo("foo1", "nice application1", new Date(), "running", new String[]{"http://foo1.bar"}));
         applicationListResponse.getApplications().add(new ApplicationInfo("foo2", "nice application2", new Date(), "sucks", new String[]{"http://foo2.bar"}));
         return xStream.toXML(applicationListResponse);
+    }
+
+    public static String applicationCheckSumsResponse() {
+        ApplicationCheckSumsResponse applicationCheckSumsResponse = new ApplicationCheckSumsResponse();
+        applicationCheckSumsResponse.setCheckSums(new HashMap<String,Long>(0));
+        return xStream.toXML(applicationCheckSumsResponse);
+    }
+
+    public static String applicationDeployArchiveResponse() {
+        ApplicationDeployArchiveResponse response = new ApplicationDeployArchiveResponse("id", "url");
+        return xStream.toXML(response);
     }
 
 }
