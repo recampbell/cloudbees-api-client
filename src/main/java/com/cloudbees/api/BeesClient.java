@@ -24,6 +24,10 @@ public class BeesClient extends BeesClientBase
 {
     static Logger logger = Logger.getLogger(BeesClient.class.getSimpleName());
 
+
+    public BeesClient(BeesClientConfiguration beesClientConfiguration) {
+        super(beesClientConfiguration);
+    }
     public BeesClient(String server, String apikey, String secret,
                       String format, String version)
     {
@@ -159,19 +163,19 @@ public class BeesClient extends BeesClientBase
             earFile, srcFile, archiveType, false, progress);
     }
     public ApplicationDeployArchiveResponse applicationDeployWar(
-        String appId, String environment, String description, String earFile,
+        String appId, String environment, String description, String warFile,
         String srcFile, UploadProgress progress) throws Exception
     {
-        return applicationDeployWar(appId, environment, description, earFile,
+        return applicationDeployWar(appId, environment, description, warFile,
                 srcFile, true, progress);
     }
     public ApplicationDeployArchiveResponse applicationDeployWar(
-        String appId, String environment, String description, String earFile,
+        String appId, String environment, String description, String warFile,
         String srcFile, boolean deltaDeploy, UploadProgress progress) throws Exception
     {
         String archiveType = "war";
         return applicationDeployArchive(appId, environment, description,
-            earFile, srcFile, archiveType, deltaDeploy, progress);
+            warFile, srcFile, archiveType, deltaDeploy, progress);
     }
 
     public ApplicationDeployArchiveResponse applicationDeployArchive(
@@ -239,14 +243,16 @@ public class BeesClient extends BeesClientBase
         try {
             ApplicationDeployArchiveResponse apiResponse =
                 (ApplicationDeployArchiveResponse)readResponse(response);
-            // Delete the delta archive file
-            if (deployDelta)
-                archiveFile.delete();
+
             return apiResponse;
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Invalid application deployment response: " + appId, e);
             logger.log(Level.FINE, "Deploy response trace: " + response);
             throw e;
+        } finally {
+            // Delete the delta archive file
+            if (deployDelta)
+                archiveFile.delete();
         }
     }
 
