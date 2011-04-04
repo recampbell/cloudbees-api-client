@@ -388,9 +388,8 @@ public class BeesClient extends BeesClientBase
         return response;
     }
 
-    protected Object readResponse(String response) throws Exception
-    {
-        XStream xstream = null;
+    protected XStream getXStream() throws Exception {
+        XStream xstream;
         if (format.equals("json")) {
             xstream = new XStream(new JettisonMappedXmlDriver());
         } else if (format.equals("xml")) {
@@ -422,7 +421,12 @@ public class BeesClient extends BeesClientBase
         xstream.processAnnotations(AccountInfo.class);
         xstream.processAnnotations(AccountListResponse.class);
 
-        Object obj = xstream.fromXML(response);
+        return xstream;
+    }
+
+    protected Object readResponse(String response) throws Exception
+    {
+        Object obj = getXStream().fromXML(response);
         if (obj instanceof ErrorResponse) {
             throw new BeesClientException((ErrorResponse)obj);
         }
