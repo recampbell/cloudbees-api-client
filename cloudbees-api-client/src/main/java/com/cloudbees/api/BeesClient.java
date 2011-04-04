@@ -2,7 +2,6 @@ package com.cloudbees.api;
 
 import com.cloudbees.upload.ArchiveUtils;
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 import org.codehaus.jettison.json.JSONObject;
 
@@ -529,13 +528,3 @@ public class BeesClient extends BeesClientBase
     }
 }
 
-@XStreamAlias("SayHelloResponse")
-class SayHelloResponse
-{
-    private String message;
-
-    public String getMessage()
-    {
-        return message;
-    }
-}
