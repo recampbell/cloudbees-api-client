@@ -369,9 +369,7 @@ public class BeesClient extends BeesClientBase
         params.put("log_name", logName);
         String url = getRequestURL("tail", params, false);
         trace("API call: " + url);
-        CometConnection cometConnection = executeCometRequest(url);
-
-        InputStream input = cometConnection.getInput();
+        InputStream input = executeCometRequest(url);
 
         byte[] bytes = new byte[1024];
         int numRead = input.read(bytes);

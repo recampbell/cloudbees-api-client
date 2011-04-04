@@ -22,8 +22,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -36,7 +34,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -46,7 +43,9 @@ import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.methods.multipart.StringPart;
+import org.apache.commons.httpclient.params.HttpConnectionParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.httpclient.params.HttpParams;
 
 public class BeesClientBase {
     Logger logger = Logger.getLogger(getClass().getSimpleName());
@@ -235,18 +234,13 @@ public class BeesClientBase {
         return response.toString();
     }
 
-    public CometConnection executeCometRequest(String url) throws Exception {
-        URL myurl = new URL(url);
-        HttpURLConnection con;        
-        if (myurl.getProtocol().equals("https")) {
-            con = (HttpsURLConnection) myurl.openConnection();
-        } else {
-            con = (HttpURLConnection) myurl.openConnection();
-        }
-        
-        con.setDoOutput(true);
-        con.setReadTimeout(0);
-        return new CometConnection(con);
+    public InputStream executeCometRequest(String url) throws Exception {
+        HttpClient httpClient = HttpClientHelper.createClient(this.beesClientConfiguration);
+        HttpParams params = httpClient.getParams();
+        params.setIntParameter(HttpConnectionParams.SO_TIMEOUT, 0);
+        GetMethod getMethod = new GetMethod(url);
+        httpClient.executeMethod(getMethod);
+        return getMethod.getResponseBodyAsStream();
     }    
 
     protected void trace(String message)
@@ -385,25 +379,4 @@ public class BeesClientBase {
         }
     }
     
-    protected class CometConnection
-    {
-        private HttpURLConnection conn;        
-        public CometConnection(HttpURLConnection conn) throws IOException{
-            super();
-            this.conn = conn;            
-        }
-        
-        public InputStream getInput() throws IOException {
-            return conn.getInputStream();
-        }
-        public OutputStream getOutput() throws IOException {
-            return conn.getOutputStream();
-        }
-        
-        public void close()
-        {
-            if(conn != null)
-                conn.disconnect();            
-        }
-    }
 }
