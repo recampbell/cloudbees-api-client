@@ -420,6 +420,10 @@ public class BeesClient extends BeesClientBase
         xstream.processAnnotations(AccountInfo.class);
         xstream.processAnnotations(AccountListResponse.class);
 
+        // Hack to fix backward compatibility
+        xstream.alias("net.stax.api.ApplicationStatusResponse", ApplicationStatusResponse.class);
+        xstream.alias("net.stax.api.ApplicationSetMetaResponse", ApplicationSetMetaResponse.class);
+
         return xstream;
     }
 
