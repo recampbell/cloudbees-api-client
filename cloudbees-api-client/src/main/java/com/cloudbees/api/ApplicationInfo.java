@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
@@ -34,6 +35,8 @@ public class ApplicationInfo {
     @XStreamImplicit(itemFieldName="url")
     private List<String> urls;
     
+    Map<String, String> settings;
+
     public ApplicationInfo(String id, String title, Date created,
             String status, String[] urls) {
         super();
@@ -69,5 +72,13 @@ public class ApplicationInfo {
             urls = new ArrayList<String>();
         
         return urls.toArray(new String[0]); 
+    }
+
+    public Map<String, String> getSettings() {
+        return settings;
+    }
+
+    public void setSettings(Map<String, String> settings) {
+        this.settings = settings;
     }
 }
